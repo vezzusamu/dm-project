@@ -1,0 +1,135 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[a4paper,left=25mm,right=25mm,top=25mm,bottom=20mm]{geometry}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\graphicspath{{./images/}}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\title{\huge{\textbf{Data Mining report}}}
+\author{Funaioli Francesca\\
+Karoui Hamza\\
+Vezzuto Samuele}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\chapter{Data Understanding}
+
+In Table \ref{table01} we show
+
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|p{7cm}|}
+		\hline
+		Feature Name & Initial Type & Cast Type & Description\\
+		\hline
+		date & object & Datetime64 & date of incident occurrence\\
+		\hline
+		state & object & String & state where incident took place\\
+		\hline
+		city\_or\_county & object & String & city or county where incident took place\\
+		\hline
+		address & object & String & address where incident took place\\
+		\hline
+		latitude & float64 & float64 & latitude of the incident\\
+		\hline
+		longitude & float64 & float64 & longitude of the incident\\
+		\hline
+		congressional\_district & int64 & Int64 & congressional district where the incident took place\\
+		\hline
+		state\_house\_district & int64 & Int64 & state house district\\
+		\hline
+		state\_senate\_district & float64 & Int64 & state senate district where the incident took place\\
+		\hline
+		participant\_age1 & float64 & Int64 & exact age of one (randomly chosen) participant in the incident\\
+		\hline
+		participant\_age\_group1 & object & String & exact age group of one (randomly chosen) participant in the incident\\
+		\hline
+		participant\_gender1 & object & String & exact gender of one (randomly chosen) participant in the incident\\
+		\hline
+		min\_age\_participants & object & Int64 & minimum age of the participants in the incident\\
+		\hline
+		avg\_age\_participants & object & float64 & average age of the participants in the incident\\
+		\hline
+		max\_age\_participants & object & Int64 & maximum age of the participants in the incident\\
+		\hline
+		n\_participants\_child & object & Int64 & number of child participants 0-11\\
+		\hline
+		n\_participants\_teen & object & Int64 & number of teen participants 12-17\\
+		\hline
+		n\_participants\_adult & object & Int64 & number of adult participants (18 +)\\
+		\hline
+		n\_males & float64 & Int64 & number of males participants\\
+		\hline
+		n\_females & float64 & Int64 & number of females participants\\
+		\hline
+		n\_killed & int64 & Int64 & number of people killed\\
+		\hline
+		n\_injured & int64 & Int64 & number of people injured\\
+		\hline
+		n\_arrested & float64 & Int64 & number of arrested participants\\
+		\hline
+		n\_unharmed & float64 & Int64 & number of unharmed participants\\
+		\hline
+		n\_participants & float64 & Int64 & number of participants in the incident\\
+		\hline
+		notes & object & String & additional notes about the incident\\
+		\hline
+		incident\_characteristics1 & object & String & incident characteristics\\
+		\hline
+		incident\_characteristics2 & object & String & incident characteristics\\
+		\hline
+	\end{tabular}
+	\caption{Features of the Incidents}
+	\label{table01}
+\end{table}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|p{7cm}|}
+		\hline
+		Feature Name & Initial Type & Cast Type & Description\\
+		\hline
+		state & object & String & \\
+		\hline
+		year & int64 & Int64 & \\
+		\hline
+		povertyPercentage & float64 & float64 & poverty percentage for the corresponding state and year\\
+		\hline
+	\end{tabular}
+	\caption{Features of the Poverty by State}
+	\label{table02}
+\end{table}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|p{7cm}|}
+		\hline
+		Feature Name & Initial Type & Cast Type & Description\\
+		\hline
+		year & int64 & Int64 & \\
+		\hline
+		state & object & String & \\
+		\hline
+		congressional\_district & int64 & Int64 & \\
+		\hline
+		party & object & String & winning party for the corresponding congressional\_district in the state, in the corresponding year\\
+		\hline
+		candidateVotes & int64 & Int64 & number of votes obtained by the winning party in the corresponding election\\
+		\hline
+		totalVotes & int64 & Int64 & number total votes for the corresponding election\\
+		\hline
+	\end{tabular}
+	\caption{Features of the Winner of Congressional Elections}
+	\label{table03}
+\end{table}
+
+\chapter{Data Preparation}
+
+\chapter{Clustering}
+
+\end{document}
