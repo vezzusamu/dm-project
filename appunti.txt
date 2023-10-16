@@ -2,3 +2,13 @@ DM progetto appunti
 230337
 Drop duplicates, dovrebbe droppare solo duplicati basati su tutte le colonne e non id
 
+1) Controllare che le colonne non siano ambigue, per esempio numero partecipanti < numero teen
+
+2) comando per controllare se un valore è nan ====> pd.isna(val)
+
+3) 
+df["state"] = df["state"].astype("string")
+df["city_or_county"] = df["city_or_county"].astype("string")
+df.info()
+
+css = df[df['participant_gender1'] == 'Male, female'] per restiture la riga in cui la colonna assume quel valore.
