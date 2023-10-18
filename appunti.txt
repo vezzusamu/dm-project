@@ -12,3 +12,4 @@ df["city_or_county"] = df["city_or_county"].astype("string")
 df.info()
 
 css = df[df['participant_gender1'] == 'Male, female'] per restiture la riga in cui la colonna assume quel valore.
+Test add.
