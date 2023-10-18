@@ -12,4 +12,12 @@ df["city_or_county"] = df["city_or_county"].astype("string")
 df.info()
 
 css = df[df['participant_gender1'] == 'Male, female'] per restiture la riga in cui la colonna assume quel valore.
+
+
+4) Per tutti gli interi e float togliere i valori negativi.
+
+5) controllare colonna avg_participant_age valori anormali (< 0 e > 120). Abbiamo notato che c'è una correlazione tra valori anormali e il fatto che & participant_age1 è nulla.
+Metà dei record di avg_participant_age sono anormali se max_participant_age è nulla. (5827)
+=======
 Test add.
+
