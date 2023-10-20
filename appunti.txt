@@ -32,3 +32,4 @@ Clustering:
 
 
 7) Abbiamo rimosso outliers andando a trasformare avg_participant_age < 10 in 10 e > 60 in 60
+8) Elimino duplicati aventi stessa data, lat e long
