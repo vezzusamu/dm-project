@@ -21,3 +21,5 @@ Metà dei record di avg_participant_age sono anormali se max_participant_age è 
 
 6) Per tutti gli interi e float, in cui non ha senso avere valori negativi, toglierli
 Rimuovo le date superiori alla data in cui è stato assegnato il dataset.
+
+7) Abbiamo rimosso outliers andando a trasformare avg_participant_age < 10 in 10 e > 60 in 60
