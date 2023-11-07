@@ -33,4 +33,9 @@ Clustering:
 1) try more metrics ("euclidean"...), try more linkeage (methods = "complete", "max", "mean"....)(gerarchico clustering)(divisivo e aglomerativo).
 2) Genera diversi valori di "taglio" nel caso gerarchico, che andranno a creare diversi cluster (taglio = distanza da qui tagliare)
 
-
+Colonne da non considerare durante l'analisi dei trend:
+ 9   participant_age1           146705 non-null  Int64         
+ 10  participant_age_group1     196755 non-null  string  
+ 25  notes                      157899 non-null  string        
+ 26  incident_characteristics1  238032 non-null  string        
+ 27  incident_characteristics2  141137 non-null  string 
