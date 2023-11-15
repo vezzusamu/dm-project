@@ -41,3 +41,6 @@ Colonne da non considerare durante l'analisi dei trend:
  25  notes                      157899 non-null  string        
  26  incident_characteristics1  238032 non-null  string        
  27  incident_characteristics2  141137 non-null  string 
+
+3) controlla if max age = min age nel caso di n_participants = 1. 
+4) controlla che i partecipanti (n_participants,n_females.... non siano tutte a null altrimenti eliminare.)
