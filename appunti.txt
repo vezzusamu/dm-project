@@ -53,7 +53,7 @@ Colonne da non considerare durante l'analisi dei trend:
  
 'n_participants_child', 'n_participants_teen', 'n_participants_adult', manca filling e da verificare perché sono altamente correlati
 
-'n_males', 'n_females', 'n_killed', 'n_injured','n_arrested', 'n_unharmed', 'n_participants', manca il filling
+'n_males', 'n_females', 'n_killed', 'n_injured','n_arrested', 'n_unharmed', 'n_participants', manca un filling parziale
  
 'povertyPercentage', 'party', 'candidatevotes', 'totalvotes' ok
 
