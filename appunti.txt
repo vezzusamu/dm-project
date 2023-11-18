@@ -46,11 +46,10 @@ Colonne da non considerare durante l'analisi dei trend:
 4) controlla che i partecipanti (n_participants,n_females.... non siano tutte a null altrimenti eliminare.)
 
 'date' ok per ora, 'state' ok, 
-'city_or_county', no valori nulli ma manca il rimaneggiamento di "città (county)" e "città (nome frazione)" -> ok per ora
+'city_or_county', no valori nulli ma manca il rimaneggiamento di "città (county)" e "città (nome frazione)" -> ok per ora, county si potrebbe rimuovere
 'latitude','longitude', ok 
 
 'congressional_district', 'state_house_district', 'state_senate_district' ok
- 
 
 'povertyPercentage', 'party', 'candidatevotes', 'totalvotes' ok
 
