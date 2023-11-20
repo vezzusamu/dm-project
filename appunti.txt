@@ -53,13 +53,13 @@ Colonne da non considerare durante l'analisi dei trend:
 
 'povertyPercentage', 'party', 'candidatevotes', 'totalvotes' ok
 
-'address', 'notes', 'year' -> attributi da eliminare non danno nessun valore aggiuntivo, address come visto nella DU, notes sono stringhe di testo, year è l'attributo aggiuntivo risultato del merge, info ridondata da "date" ok
+'address', 'notes', 'year' -> attributi da eliminare ok
 
 
 Da fare: 
-'n_participants_child', 'n_participants_teen', 'n_participants_adult', manca filling e da verificare perché sono altamente correlati
+'n_participants_child', 'n_participants_teen', 'n_participants_adult', ok
 
-'n_males', 'n_females', 'n_killed', 'n_injured','n_arrested', 'n_unharmed', 'n_participants', manca un filling parziale
+'n_males', 'n_females', 'n_killed', 'n_injured','n_arrested', 'n_unharmed', 'n_participants', ok 
  
 - matrice di correlazione e giustificarla.
 'participant_age1', 'min_age_participants', 'avg_age_participants', 'max_age_participants' -> ok, possiamo mantenere participant_age1 per usare anche 'participant_age_group1' e
@@ -67,3 +67,5 @@ Da fare:
 
 POST 26:
 'incident_characteristics1', 'incident_characteristics2', manca il filling o da verificare se ha senso 
+
+#TODO: improve the mean checking nmale + nfemale = nparticipant
