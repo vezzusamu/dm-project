@@ -69,3 +69,14 @@ POST 26:
 'incident_characteristics1', 'incident_characteristics2', manca il filling o da verificare se ha senso 
 
 #TODO: improve the mean checking nmale + nfemale = nparticipant
+#TODO: aggiungi  crimine rispetto alla somma dei crimini in quello stato e distretto e in base al partito politico
+
+crimine rispetto alla percentuale di povertà e partito politico
+
+teen nel crimine rispetto alla somma dei teen in quello stato
+
+lo stesso con adult
+
+lo stesso con child
+
+lo stesso con male e female
