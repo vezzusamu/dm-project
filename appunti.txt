@@ -80,3 +80,12 @@ lo stesso con adult
 lo stesso con child
 
 lo stesso con male e female
+
+
+-clustering: 
+- fare vedere che c'è una clustering structure (con pca)
+- scaling dei dati ok
+- k means: selection k con elbow e caratterizzazione
+- DBSCAN: selection stato su cui fare il clustering, selection su eps, minpts (elbow) e caratterizzazione
+- HIERARCHICAL: " , selection parametri, ", caratterizzazione
+- x-means stesso di k-means
