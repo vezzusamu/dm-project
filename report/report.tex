@@ -10,6 +10,7 @@
 \title{\huge{\textbf{Data Mining report}}}
 \author{Funaioli Francesca\\
 Karoui Hamza\\
+Francesco Mitola\\
 Vezzuto Samuele}
 
 \begin{document}
@@ -19,13 +20,90 @@ Vezzuto Samuele}
 
 \chapter{Data Understanding}
 
-In Table \ref{table01} we show
+The data understanding phase aims to prepare data for the following data mining tasks and to gain informations on the general properties of our data.
+We started by importing the three csv files, \texttt{incidents.csv}, \texttt{povertyByStateYear.csv} and \texttt{year\_state\_district\_house.csv}.
+We did some preliminary checks, for example we looked for attributes containing null values, and then we started analysing each column of each dataset.
+
+\subsection{Incidents}
+
+\subsubsection{Date}
+
+We converted each \textit{date} value to a datetime object: there where no null values or NaT values.
+We then plotted the distribution of the dates over the years: we noticed that the dates ranged from year 2013 to year 2018 and from year 2028 to year 2030.
+Year 2013 only contains 253 incidents so we consider removing these few rows; we also decided to delete incidents recorded in years from 2028 to 2030, because they are to happen after the date the dataset was provided.
+
+\subsubsection{State}
+
+The \textit{state} attribute contains no null values and it has 51 unique values: the 50 states of the United States and the District of Columbia.
+
+\subsubsection{City or county}
+
+The \textit{city\_or\_county} attribute has no null values; we noticed it contains additional informations about the suburb or the neighborhood in brackets, e.g. ``Minneapolis (Brooklyn Center)".
+We consider removing this informations in the following phases.
+
+\subsubsection{Address}
+
+The \textit{address} attribute contains some null values, but we believe it does not hold any statistical value, given that a more specific information about the exact location of the incident is found by using the geographical coordinates.
+
+\subsubsection{Latitude and longitude}
+
+The \textit{latitude} and \textit{longitude} attributes contain some null values.
+We also noticed some outliers by drawing empirical box boundaries of the United States: there are some incidents recorded outside of the U.S. that we will remove in the next phase.
+
+\subsubsection{Congressional, State House and State Senate district}
+
+These attributes contain some null values.
+We also noticed that most of the incidents happened in the state of Illinois, by plotting the top 10 incidents for each of these attributes.
+
+\subsubsection{Age and gender attributes}
+
+The \textit{participant\_age1} attribute contains some outliers wrt the corresponding value reported in the \textit{participant\_age\_group1}.
+There also some outliers, e.g. maximum value of \textit{participant\_age1} is 311.
+We noticed that most of the participants are adult males.
+The attributes \textit{participant\_age1}, \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{avg\_age\_participants} all have similar distributions.
+The attributes \textit{n\_participants\_child}, \textit{n\_participants\_teen} and \textit{n\_participants\_adult} all present the same issues: they all contain some outliers given by non-numerical strings, very large numbers or negative numbers.
+
+\subsubsection{Number of involved people}
+
+The majority of the incidents only involve between 0 and 5 people, with almost no killed, injured, unharmed or arrested people.
+
+\subsubsection{Notes and incident characteristics}
+
+We consider these attributes to hold no statistical value.
+
+\subsection{Poverty by state}
+
+The \textit{state} attribute contains 52 unique values: 51 of them are the same as the states in the incidents dataset, the remaining one is labeled ``United States" and contains the average of the whole country.
+We consider using the average to possibly fill the missing values in the following phase.
+
+There are no \textit{povertyPercentage} values for the year 2012, but we are only interested in relating this information to the incidents dataset, which only contains relevant incidents in the range of years 2013-2018.
+
+\subsection{Year state district house}
+
+This dataset contains no null values.
+We will only consider data in the range of years 2013-2018 for integrating this data with the incidents dataset.
+
+\section{Data integration}
+
+We created an additional column called \textit{total\_votes\_for\_state} in the year-state-house-district dataset; this column contains the total number of votes for each state and for each year.
+We merged the incidents dataset with the poverty dataset using the attributes \textit{state} and \textit{year}.
+We then merged the resulting dataset with the remaining one using the attributes \textit{state}, \textit{year} and \textit{congressional\_district}.
+
+\section{Correlation analysis}
+
+TODO
+
+\chapter{Data Preparation}
+
+The data preparation phase uses the information gained in the previous phase to select record, manage outliers and missing values and improve data quality.
+We started by changing the data types of the attributes as shown in Table \ref{table01}.
 
 \begin{table}
 	\centering
+	\begin{small}
 	\begin{tabular}{|l|l|l|p{7cm}|}
 		\hline
-		Feature Name & Initial Type & Cast Type & Description\\
+		\textbf{Feature Name} & \textbf{Initial Type} & \textbf{Cast Type} & \textbf{Description}\\
 		\hline
 		date & object & Datetime64 & date of incident occurrence\\
 		\hline
@@ -83,52 +161,27 @@ In Table \ref{table01} we show
 		\hline
 		incident\_characteristics2 & object & String & incident characteristics\\
 		\hline
-	\end{tabular}
-	\caption{Features of the Incidents}
-	\label{table01}
-\end{table}
-
-\begin{table}
-	\centering
-	\begin{tabular}{|l|l|l|p{7cm}|}
-		\hline
-		Feature Name & Initial Type & Cast Type & Description\\
-		\hline
-		state & object & String & \\
-		\hline
 		year & int64 & Int64 & \\
 		\hline
 		povertyPercentage & float64 & float64 & poverty percentage for the corresponding state and year\\
-		\hline
-	\end{tabular}
-	\caption{Features of the Poverty by State}
-	\label{table02}
-\end{table}
-
-\begin{table}
-	\centering
-	\begin{tabular}{|l|l|l|p{7cm}|}
-		\hline
-		Feature Name & Initial Type & Cast Type & Description\\
-		\hline
-		year & int64 & Int64 & \\
-		\hline
-		state & object & String & \\
-		\hline
-		congressional\_district & int64 & Int64 & \\
 		\hline
 		party & object & String & winning party for the corresponding congressional\_district in the state, in the corresponding year\\
 		\hline
 		candidateVotes & int64 & Int64 & number of votes obtained by the winning party in the corresponding election\\
 		\hline
-		totalVotes & int64 & Int64 & number total votes for the corresponding election\\
+		totalVotes & int64 & Int64 & total number of votes for the corresponding election\\
+		\hline
+		total\_votes\_for\_state & int64 & Int64 & total number of votes for each year and for each state\\
 		\hline
 	\end{tabular}
-	\caption{Features of the Winner of Congressional Elections}
-	\label{table03}
+	\end{small}
+	\caption{Features of the merged dataset}
+	\label{table01}
 \end{table}
 
-\chapter{Data Preparation}
+We then removed negative values by setting them to NaN.
+
+\subsubsection{Age attributes}
 
 \chapter{Clustering}
 
