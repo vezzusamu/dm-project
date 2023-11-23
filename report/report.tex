@@ -95,7 +95,7 @@ TODO
 
 \chapter{Data Preparation}
 
-The data preparation phase uses the information gained in the previous phase to select record, manage outliers and missing values and improve data quality.
+The data preparation phase uses the information gained in the previous phase to select records, manage outliers and missing values and improve data quality.
 We started by changing the data types of the attributes as shown in Table \ref{table01}.
 
 \begin{table}
@@ -182,6 +182,29 @@ We started by changing the data types of the attributes as shown in Table \ref{t
 We then removed negative values by setting them to NaN.
 
 \subsubsection{Age attributes}
+
+For the attributes \textit{participant\_age1}, \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{avg\_age\_participants}, we considered values $\ge 120$ as outliers and we set them to NaN.
+These three attributes seemed to be very correlated, so we consider deleting the columns \textit{min\_age\_participants} and \textit{max\_age\_participants} and only keeping \textit{avg\_age\_participants}.
+
+\subsubsection{Date}
+
+We considered all dates after 2023-10-01 (the date we received the dataset) to be outliers, in particular errors in the data.
+We dropped all records related to year 2013, as the year was under-represented (only 242 records).
+
+\subsubsection{Geographical attributes}
+
+The records with coordinates outside U.S. (other that null values) were automatically deleted after the data integration.
+We consider the triple \textit{$<$date,latitude,longitude$>$} to be a key identifying an incident: we assume that there are no incidents happening on the same day in the exact same geographic coordinates.
+Hence, we decided to eliminate the records in which these 3 values are duplicate.
+
+For the rows in which \textit{latitude} and \textit{longitude} are NaN, we filled the missing values using the mean computed for the respective \textit{state} and \textit{city\_or\_county}.
+
+We decided to drop the columns \textit{state\_house\_district} and \textit{state\_senate\_district}, given that they represent further subdivisions of the US territory that are not pertinent to our analysis.
+In fact, we are only interested in the \textit{congressional\_district}, because the electoral information has the same granularity.
+
+\subsubsection{Number of participants attributes}
+
+We checked whether the number of killed, injured, arrested and unharmed people exceeded the total number of participants in that incident.
 
 \chapter{Clustering}
 
