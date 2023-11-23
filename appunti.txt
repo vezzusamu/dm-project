@@ -94,3 +94,7 @@ todo: """ df_2018 = df[df['date'].dt.year == 2018]
 df = df[~(df['date'].dt.year == 2018)]  """
 
 todo classificazione: df['involve_killing'] = np.where(df['n_killed'] > 0, 1, 0)
+
+add some entropy meausre in dp: from scipy.stats import entropy
+df['avg_age_participants_entropy'] = df['avg_age_participants'].agg([entropy])
+df['avg_age_participants_entropy'].fillna(0)
