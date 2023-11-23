@@ -89,3 +89,8 @@ lo stesso con male e female
 - DBSCAN: selection stato su cui fare il clustering, selection su eps, minpts (elbow) e caratterizzazione
 - HIERARCHICAL: " , selection parametri, ", caratterizzazione
 - x-means stesso di k-means
+
+todo: """ df_2018 = df[df['date'].dt.year == 2018]
+df = df[~(df['date'].dt.year == 2018)]  """
+
+todo classificazione: df['involve_killing'] = np.where(df['n_killed'] > 0, 1, 0)
