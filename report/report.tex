@@ -255,4 +255,25 @@ We also decided to drop the columns \textit{year} (just a result of data integra
 
 \chapter{Clustering}
 
+In order to prepare data for applying the clustering algorithms, we did some steps of preprocessing.
+First of all we added a binary column \textit{involve\_killing} that has value 0 nobody was killed in the incident, and it has value 1 if there was at least a person killed in the incident.
+We applied a normalization to numerical values.
+The we computed the PCA with 2 components and got the visualization showed in Figure \ref{pca}.
+
+\begin{figure}[h]
+	\includegraphics[width=0.8\textwidth]{pca}
+	\centering
+	\caption{Principal component analysis, computed on 2 components.
+	The color of the points corresponds to the value of \textit{involve\_killed}.}
+	\label{pca}
+\end{figure}
+
+\section{K-Means}
+
+\subsection{X-Means}
+
+\section{Hierarchical clustering}
+
+\section{Dbscan clustering}
+
 \end{document}
