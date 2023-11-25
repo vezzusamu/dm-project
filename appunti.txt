@@ -98,3 +98,9 @@ todo classificazione: df['involve_killing'] = np.where(df['n_killed'] > 0, 1, 0)
 add some entropy meausre in dp: from scipy.stats import entropy
 df['avg_age_participants_entropy'] = df['avg_age_participants'].transform(entropy)
 df['avg_age_participants_entropy'].fillna(0)
+
+
+indicatori troppo correlati:
+
+killed,injured,arrested,unharmed (1/somma e media) con stato / distretto (1/somma)
+adult con males
