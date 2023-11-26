@@ -122,3 +122,5 @@ df["adult_percentage"] = df["n_participants_adult"] / df["n_participants"]
 df.loc[np.isnan(df["adult_percentage"]),"adult_percentage"] = 0
 
 non influiscono più di tanto, lo stesso con killed etc.
+
+TODO: plottare su mappa i distretti colorati per republican o democrat o democratic-farmer-labor?
