@@ -104,3 +104,21 @@ indicatori troppo correlati:
 
 killed,injured,arrested,unharmed (1/somma e media) con stato / distretto (1/somma)
 adult con males
+
+injured/killed/unharmed adult highly corr with males x district 
+
+
+indicatori ininfluenti e/o correlati
+#Ratio of killed people in the incidents w.r.t. number of participants
+df["child_percentage"] = df["n_participants_child"] / df["n_participants"]
+df.loc[np.isnan(df["child_percentage"]),"child_percentage"] = 0
+
+#Ratio of injured people in the incidents w.r.t. number of participants
+df["teen_percentage"] = df["n_participants_teen"] / df["n_participants"]
+df.loc[np.isnan(df["teen_percentage"]),"teen_percentage"] = 0
+
+#Ratio of arrested people in the incidents w.r.t. number of participants
+df["adult_percentage"] = df["n_participants_adult"] / df["n_participants"]
+df.loc[np.isnan(df["adult_percentage"]),"adult_percentage"] = 0
+
+non influiscono più di tanto, lo stesso con killed etc.
