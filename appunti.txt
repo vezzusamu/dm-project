@@ -124,3 +124,8 @@ df.loc[np.isnan(df["adult_percentage"]),"adult_percentage"] = 0
 non influiscono più di tanto, lo stesso con killed etc.
 
 TODO: plottare su mappa i distretti colorati per republican o democrat o democratic-farmer-labor?
+
+TODO: capire cosa significa: columns_to_check = ["participant_age1", "participant_age_group1", "participant_gender1", "min_age_participants", "avg_age_participants", "max_age_participants", "n_participants_child", "n_participants_teen", "n_participants_adult"]
+df[(df["avg_age_participants"].isna())][columns_to_check] in dp, per ora tolto
+
+TODO: studiare la distribuzione degli indicatori
