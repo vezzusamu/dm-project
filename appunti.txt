@@ -1,75 +1,28 @@
-ALASKA SCOMPARSA CON MERGE; IMPORTANTE RISOLVI HAMZA, ASAP!
-
 DM progetto appunti
-230337
-Drop duplicates, dovrebbe droppare solo duplicati basati su tutte le colonne e non id
 
-1) Controllare che le colonne non siano ambigue, per esempio numero partecipanti < numero teen
-
-2) comando per controllare se un valore è nan ====> pd.isna(val)
-
-3) 
-df["state"] = df["state"].astype("string")
-df["city_or_county"] = df["city_or_county"].astype("string")
-df.info()
-
-css = df[df['participant_gender1'] == 'Male, female'] per restiture la riga in cui la colonna assume quel valore.
-
-
-4) Per tutti gli interi e float togliere i valori negativi.
-
-5) controllare colonna avg_participant_age valori anormali (< 0 e > 120). Abbiamo notato che c'è una correlazione tra valori anormali e il fatto che & participant_age1 è nulla.
-Metà dei record di avg_participant_age sono anormali se max_participant_age è nulla. (5827)
-
-6) Per tutti gli interi e float, in cui non ha senso avere valori negativi, toglierli
-Rimuovo le date superiori alla data in cui è stato assegnato il dataset.
-
-7) Abbiamo rimosso outliers andando a trasformare avg_participant_age < 10 in 10 e > 60 in 60
-8) Elimino duplicati aventi stessa data, lat e long
-
-9) Assegnamo alle date null valori da una biased random distribution 
-10) Sostituiamo le cordinate NaN con quelle di stesso stato e città, se nessuna corrispondenza esiste allora prendiamo solo lo stesso stato. 
-
-Clustering:
-
-1) try more metrics ("euclidean"...), try more linkeage (methods = "complete", "max", "mean"....)(gerarchico clustering)(divisivo e aglomerativo).
-2) Genera diversi valori di "taglio" nel caso gerarchico, che andranno a creare diversi cluster (taglio = distanza da qui tagliare)
-
-Colonne da non considerare durante l'analisi dei trend:
- 9   participant_age1           146705 non-null  Int64         
- 10  participant_age_group1     196755 non-null  string  
- 25  notes                      157899 non-null  string        
- 26  incident_characteristics1  238032 non-null  string        
- 27  incident_characteristics2  141137 non-null  string 
-
-3) controlla if max age = min age nel caso di n_participants = 1. 
-4) controlla che i partecipanti (n_participants,n_females.... non siano tutte a null altrimenti eliminare.)
-
+VALORI NULLI:
 'date' ok per ora, 'state' ok, 
-'city_or_county', no valori nulli ma manca il rimaneggiamento di "città (county)" e "città (nome frazione)" -> ok per ora, county si potrebbe rimuovere
 'latitude','longitude', ok 
-
 'congressional_district', 'state_house_district', 'state_senate_district' ok
-
 'povertyPercentage', 'party', 'candidatevotes', 'totalvotes' ok
-
-'address', 'notes', 'year' -> attributi da eliminare ok
-
-
-Da fare: 
+'address', 'notes', 'year'ok
 'n_participants_child', 'n_participants_teen', 'n_participants_adult', ok
-
 'n_males', 'n_females', 'n_killed', 'n_injured','n_arrested', 'n_unharmed', 'n_participants', ok 
- 
+'incident_characteristics1', 'incident_characteristics2' ok 
+
 - matrice di correlazione e giustificarla.
 'participant_age1', 'min_age_participants', 'avg_age_participants', 'max_age_participants' -> ok, possiamo mantenere participant_age1 per usare anche 'participant_age_group1' e
        'participant_gender1',
 
+
+'city_or_county', no valori nulli ma manca il rimaneggiamento di "città (county)" e "città (nome frazione)" -> ok per ora, county si potrebbe rimuovere NO 
+COME giustificarlo: non abbiamo rimosso (county) o (nome frazione) perché rappresentano dei paesi a se stanti, quindi avremmo falsato i dati (e in più sono < 15%)
+
+ 
 POST 26:
-'incident_characteristics1', 'incident_characteristics2', manca il filling o da verificare se ha senso 
 
 #TODO: improve the mean checking nmale + nfemale = nparticipant
-#TODO: aggiungi  crimine rispetto alla somma dei crimini in quello stato e distretto e in base al partito politico
+#TODO: aggiungi crimine rispetto alla somma dei crimini in quello stato e distretto e in base al partito politico
 
 crimine rispetto alla percentuale di povertà e partito politico
 
@@ -81,51 +34,12 @@ lo stesso con child
 
 lo stesso con male e female
 
-
--clustering: 
-- fare vedere che c'è una clustering structure (con pca)
-- scaling dei dati ok
-- k means: selection k con elbow e caratterizzazione
-- DBSCAN: selection stato su cui fare il clustering, selection su eps, minpts (elbow) e caratterizzazione
-- HIERARCHICAL: " , selection parametri, ", caratterizzazione
-- x-means stesso di k-means
-
-todo: """ df_2018 = df[df['date'].dt.year == 2018]
-df = df[~(df['date'].dt.year == 2018)]  """
-
-todo classificazione: df['involve_killing'] = np.where(df['n_killed'] > 0, 1, 0)
+TODO: aggiungere indicatori su entropia
 
 add some entropy meausre in dp: from scipy.stats import entropy
 df['avg_age_participants_entropy'] = df['avg_age_participants'].transform(entropy)
 df['avg_age_participants_entropy'].fillna(0)
 
-
-indicatori troppo correlati:
-
-killed,injured,arrested,unharmed (1/somma e media) con stato / distretto (1/somma)
-adult con males
-
-injured/killed/unharmed adult highly corr with males x district 
-
-
-indicatori ininfluenti e/o correlati
-#Ratio of killed people in the incidents w.r.t. number of participants
-df["child_percentage"] = df["n_participants_child"] / df["n_participants"]
-df.loc[np.isnan(df["child_percentage"]),"child_percentage"] = 0
-
-#Ratio of injured people in the incidents w.r.t. number of participants
-df["teen_percentage"] = df["n_participants_teen"] / df["n_participants"]
-df.loc[np.isnan(df["teen_percentage"]),"teen_percentage"] = 0
-
-#Ratio of arrested people in the incidents w.r.t. number of participants
-df["adult_percentage"] = df["n_participants_adult"] / df["n_participants"]
-df.loc[np.isnan(df["adult_percentage"]),"adult_percentage"] = 0
-
-non influiscono più di tanto, lo stesso con killed etc.
-
-TODO: plottare su mappa i distretti colorati per republican o democrat o democratic-farmer-labor?
-
-TODO: capire cosa significa: columns_to_check = ["participant_age1", "participant_age_group1", "participant_gender1", "min_age_participants", "avg_age_participants", "max_age_participants", "n_participants_child", "n_participants_teen", "n_participants_adult"]
-df[(df["avg_age_participants"].isna())][columns_to_check] in dp, per ora tolto
+TODO DU: plottare su mappa i distretti colorati per republican o democrat o democratic-farmer-labor?
 
 TODO: studiare la distribuzione degli indicatori
