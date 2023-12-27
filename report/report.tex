@@ -1,67 +1,111 @@
-\documentclass[10pt,a4paper]{report}
-\usepackage[a4paper,left=25mm,right=25mm,top=25mm,bottom=20mm]{geometry}
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,left=20mm,right=20mm,top=25mm,bottom=20mm]{geometry}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \graphicspath{{./images/}}
 \usepackage{csquotes}
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage{geometry}
+\usepackage{float}
 
-\title{\huge{\textbf{Data Mining report}}}
+\title{\huge{\textbf{Data Mining Project Report}}}
 \author{Funaioli Francesca\\
 Karoui Hamza\\
-Francesco Mitola\\
-Vezzuto Samuele}
+Mitola Francesco\\
+Vezzuto Samuele\\
+}
 
 \begin{document}
 
-\maketitle
+\makeatletter
+\begin{titlepage}
+	\begin{center}
+		\includegraphics[width=0.4\linewidth]{unipi}\\[4ex]
+		{\huge \bfseries  \@title }\\[2ex]
+		{\Large A.Y. 2023/2024 }\\[6ex]
+		{\large  \@author}
+	\end{center}
+\end{titlepage}
+\makeatother
+
 \tableofcontents
 
 \chapter{Data Understanding}
 
 The data understanding phase aims to prepare data for the following data mining tasks and to gain informations on the general properties of our data.
-We started by importing the three csv files, \texttt{incidents.csv}, \texttt{povertyByStateYear.csv} and \texttt{year\_state\_district\_house.csv}.
-We did some preliminary checks, for example we looked for attributes containing null values, and then we started analysing each column of each dataset.
+This phase of data analysis is focused on an identification of missing values, outliers, duplicates and distribution analysis.
+The three csv files, \texttt{incidents.csv}, \texttt{povertyByStateYear.csv} and \texttt{year\_state\_district\_house.csv} were imported and analyzed separately.
+The first preliminary checks comprised looking for null values and checking the data types of the attributes, before a more in depth analysis of each column of each dataset.
+By computing the statistics of the numerical values of each dataset, we noticed a wrong value in attribute \textit{participant\_age\_1} (values of 311).
+We also found out that some of the columns considered contained non-numerical values, as they were not displayed.
+The value of 0 for attribute \textit{participant\_age\_1} occurs when there are infants involved and therefore it is not to be considered a wrong value.
+In a similar way, \textit{n\_participants} has value 0 if the incident had no victims or no shots where fired, but also in records with most of the attributes set to null.
 
 \subsection{Incidents}
 
 \subsubsection{Date}
 
-We converted each \textit{date} value to a datetime object: there where no null values or NaT values.
-We then plotted the distribution of the dates over the years: we noticed that the dates ranged from year 2013 to year 2018 and from year 2028 to year 2030.
-Year 2013 only contains 253 incidents so we consider removing these few rows; we also decided to delete incidents recorded in years from 2028 to 2030, because they are to happen after the date the dataset was provided.
+Each \textit{date} value was converted to a datetime object, after checking that there where no null or NaT values.
+The plot in Figure \ref{incidents_per_year}, representing the number of incidents per year, shows an increasing trend in the number of crimes over the years.
+It also shows a lack of records related to years 2013 and 2018: there are only 253 incidents happened in 2013, hence they will be removed during data preparation.
+As for the year 2018, there is only data relating to the first three months of the year in the dataset, so year 2018 will be analyzed on its own.
 
-\subsubsection{State}
+\begin{figure}[h]
+	\includegraphics[width=0.8\textwidth]{incidents_per_year}
+	\centering
+	\caption{Number of incidents per year.}
+	\label{incidents_per_year}
+\end{figure}
 
-The \textit{state} attribute contains no null values and it has 51 unique values: the 50 states of the United States and the District of Columbia.
+\subsubsection{Geographical information}
 
-\subsubsection{City or county}
+The \textit{state} attribute contains no null values and it has 51 unique values: the 50 states of the United States and the District of Columbia, which we will consider as a special state.
+Figure \ref{incidents_per_state} shows the number of incidents recorded in each state in decreasing order.
 
-The \textit{city\_or\_county} attribute has no null values; we noticed it contains additional informations about the suburb or the neighborhood in brackets, e.g. ``Minneapolis (Brooklyn Center)".
-We consider removing this informations in the following phases.
+\begin{figure}[h]
+	\includegraphics[width=0.8\textwidth]{incidents_per_state}
+	\centering
+	\caption{Number of incidents per state.}
+	\label{incidents_per_state}
+\end{figure}
 
-\subsubsection{Address}
+The \textit{city\_or\_county} attribute has no null values, but it often contains additional informations about the suburb or the neighborhood in brackets, that provide a more precise location for the incident, e.g. ``Minneapolis (Brooklyn Center)".
+We consider removing this kind of information in the next phase.
+There are also instances containing the substring ``(county)" at the end, e.g. ``Orange (county)", that also appears as ``Orange": these instances will be substituted using just the name of the city/county.
+Figure \ref{incidents_per_citycounty} shows the number of incidents recorded in each city/county in decreasing order.
+\begin{figure}[H]
+	\includegraphics[width=0.8\textwidth]{incidents_per_citycounty}
+	\centering
+	\caption{Number of incidents per city or county.}
+	\label{incidents_per_citycounty}
+\end{figure}
 
-The \textit{address} attribute contains some null values, but we believe it does not hold any statistical value, given that a more specific information about the exact location of the incident is found by using the geographical coordinates.
-
-\subsubsection{Latitude and longitude}
+The \textit{address} attribute contains some null values, but we believe it does not hold any statistical value, given that more specific information about the exact location of an incident is found by using the geographical coordinates.
+Furthermore, there are only 6020 records for which address information can not be inferred using \textit{latitude} and \textit{longitude} attributes, so we will remove this column.
 
 The \textit{latitude} and \textit{longitude} attributes contain some null values.
-We also noticed some outliers by drawing empirical box boundaries of the United States: there are some incidents recorded outside of the U.S. that we will remove in the next phase.
+We also noticed some outliers by drawing empirical box boundaries of the United States: there are some incidents recorded outside of the U.S. that will be removed in the next phase.
 
-\subsubsection{Congressional, State House and State Senate district}
-
-These attributes contain some null values.
+Attributes \textit{congressional\_district}, \textit{state\_house\_district} and \textit{state\_senate\_district} contain some null values.
 We also noticed that most of the incidents happened in the state of Illinois, by plotting the top 10 incidents for each of these attributes.
 
-\subsubsection{Age and gender attributes}
+\subsubsection{Age and gender information}
 
-The \textit{participant\_age1} attribute contains some outliers wrt the corresponding value reported in the \textit{participant\_age\_group1}.
-There also some outliers, e.g. maximum value of \textit{participant\_age1} is 311.
-We noticed that most of the participants are adult males.
+The \textit{participant\_age1} attribute contains some outliers, mostly being values of type string and values that are too large to be the age of a person.
+There are also some outliers if this attribute is compared to the corresponding value reported in the \textit{participant\_age\_group1} field.
+As shown in Figure \ref{incidents_per_agegender}, most of the participants are adult males.
 The attributes \textit{participant\_age1}, \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{avg\_age\_participants} all have similar distributions.
-The attributes \textit{n\_participants\_child}, \textit{n\_participants\_teen} and \textit{n\_participants\_adult} all present the same issues: they all contain some outliers given by non-numerical strings, very large numbers or negative numbers.
+
+The attributes \textit{n\_participants\_child}, \textit{n\_participants\_teen} and \textit{n\_participants\_adult} all present the same issues: they all contain outliers given by non-numerical strings, very large or negative numbers.
+
+\begin{figure}[H]
+	\includegraphics[width=0.8\textwidth]{incidents_per_agegroup}
+	\centering
+	\includegraphics[width=0.8\textwidth]{incidents_per_gender}
+	\caption{Number of incidents per age group (above) and gender (below) of participant1.}
+	\label{incidents_per_agegender}
+\end{figure}
 
 \subsubsection{Number of involved people}
 
@@ -83,11 +127,53 @@ There are no \textit{povertyPercentage} values for the year 2012, but we are onl
 This dataset contains no null values.
 We will only consider data in the range of years 2013-2018 for integrating this data with the incidents dataset.
 
-\section{Data integration}
+\section{Data Integration}
 
-We created an additional column called \textit{total\_votes\_for\_state} in the year-state-house-district dataset; this column contains the total number of votes for each state and for each year.
+We created an additional column called \textit{total\_votes\_for\_state} in the year-state-house-district dataset: this column contains the total number of votes for each state and for each year.
 We merged the incidents dataset with the poverty dataset using the attributes \textit{state} and \textit{year}.
 We then merged the resulting dataset with the remaining one using the attributes \textit{state}, \textit{year} and \textit{congressional\_district}.
+During the data integration process, records containing incidents set outside the U.S. were automatically deleted, resulting in a dataset that has no outliers in attributes \textit{latitude} and \textit{longitude}.
+
+The dataset obtained by data integration can be used to further analyze and relate political party and poverty percentage to each congressional district.
+
+\textbf{TODO} \textit{si potrebbero aggiungere degli screen dei plot delle mappe, quella degli shooting e quella dei map shooting. in questo momento però non riesco a fare gli screen}
+
+\section{Distribution and Correlation Analysis}
+
+The plots in Figure \ref{age_du} show that, as previously said, age attributes all have very similar distributions.
+
+From Figure \ref{incidents_per_nparticipants} we can see that most of the incidents involve very few participants.
+Specifically, the majority of them only involve between 0 and 3 participants, with incidents having only one person involved being the most common ones.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{min_age_du}\includegraphics[width=0.5\textwidth]{max_age_du}
+	\includegraphics[width=0.5\textwidth]{avg_age_du}\includegraphics[width=0.5\textwidth]{part_age_du}
+	\caption{Plot of minimum (top left), maximum (top right), average (bottom left) and participant1 (bottom right) age distributions.}
+	\label{age_du}
+\end{figure}
+
+\begin{figure}[h]
+	\includegraphics[width=0.7\textwidth]{incidents_per_nparticipants}
+	\centering
+	\caption{Number of incidents per number of people involved.}
+	\label{incidents_per_nparticipants}
+\end{figure}
+
+The correlation matrix is shown in Figure \ref{corr_matrix_du}.
+At first glance, the only noteworthy correlations are those between the \textit{participant\_age1} feature of the randomly taken person and the attributes \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{age\_age\_participants}.
+This correlation is confirmed by the fact that the majority of the incidents only involve 1 or 2 participants. 
+The correlation matrix will be computed again once outliers in the numerical attributes, which compromise the correlation calculation, have been eliminated.
+
+We also observed that the number of males involved has a high correlation (0.83) with the number of participants because on average, as seen above, incidents tend to have a much more higher number of males participants than females participants.
+
+\begin{figure}[h]
+	\includegraphics[width=1\textwidth]{corr_matrix_du}
+	\centering
+	\caption{Correlation matrix of numerical attributes.}
+	\label{corr_matrix_du}
+\end{figure}
+
 
 \chapter{Data Preparation}
 
