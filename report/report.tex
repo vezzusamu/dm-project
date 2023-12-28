@@ -1,6 +1,7 @@
 \documentclass[11pt,a4paper]{report}
 \usepackage[a4paper,left=20mm,right=20mm,top=25mm,bottom=20mm]{geometry}
 \usepackage{amsfonts}
+\usepackage{xcolor}
 \usepackage{graphicx}
 \graphicspath{{./images/}}
 \usepackage{csquotes}
@@ -8,6 +9,12 @@
 \usepackage{listings}
 \usepackage{geometry}
 \usepackage{float}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=darkgray,
+	linkcolor=black
+}
 
 \title{\huge{\textbf{Data Mining Project Report}}}
 \author{Funaioli Francesca\\
@@ -103,7 +110,7 @@ The attributes \textit{n\_participants\_child}, \textit{n\_participants\_teen} a
 	\includegraphics[width=0.8\textwidth]{incidents_per_agegroup}
 	\centering
 	\includegraphics[width=0.8\textwidth]{incidents_per_gender}
-	\caption{Number of incidents per age group (above) and gender (below) of participant1.}
+	\caption{Number of incidents per age group (above) and gender (below) of the randomly chosen participant.}
 	\label{incidents_per_agegender}
 \end{figure}
 
@@ -133,17 +140,12 @@ We created an additional column called \textit{total\_votes\_for\_state} in the 
 We merged the incidents dataset with the poverty dataset using the attributes \textit{state} and \textit{year}.
 We then merged the resulting dataset with the remaining one using the attributes \textit{state}, \textit{year} and \textit{congressional\_district}.
 During the data integration process, records containing incidents set outside the U.S. were automatically deleted, resulting in a dataset that has no outliers in attributes \textit{latitude} and \textit{longitude}.
+The dataset obtained by data integration will be used to further analyze and relate political party and poverty percentage to each congressional district.
 
-The dataset obtained by data integration can be used to further analyze and relate political party and poverty percentage to each congressional district.
+\section{Distribution Analysis}
 
-\textbf{TODO} \textit{si potrebbero aggiungere degli screen dei plot delle mappe, quella degli shooting e quella dei map shooting. in questo momento però non riesco a fare gli screen}
-
-\section{Distribution and Correlation Analysis}
-
-The plots in Figure \ref{age_du} show that, as previously said, age attributes all have very similar distributions.
-
-From Figure \ref{incidents_per_nparticipants} we can see that most of the incidents involve very few participants.
-Specifically, the majority of them only involve between 0 and 3 participants, with incidents having only one person involved being the most common ones.
+In order to analyze the features in the dataset, we displayed and examined the distribution of each column.
+Figure \ref{age_du} shows the plots related to age attributes: as previously said, they all have very similar distributions.
 
 \begin{figure}[h]
 	\centering
@@ -153,12 +155,36 @@ Specifically, the majority of them only involve between 0 and 3 participants, wi
 	\label{age_du}
 \end{figure}
 
+From Figure \ref{incidents_per_nparticipants} we can see that most of the incidents involve very few participants.
+Specifically, the majority of them only involve between 0 and 3 participants, with incidents having only one person involved being the most common ones.
+
 \begin{figure}[h]
 	\includegraphics[width=0.7\textwidth]{incidents_per_nparticipants}
 	\centering
 	\caption{Number of incidents per number of people involved.}
 	\label{incidents_per_nparticipants}
 \end{figure}
+
+As previously shown in Figure \ref{incidents_per_agegender}, the majority of participants recorded in the incidents is comprised of adult (18 years old or older) and male people.
+
+\textbf{TODO} \textit{aggiungere gli screen dei plot delle mappe, quella degli shooting e quella dei mass shooting. in questo momento però non riesco a fare gli screen}\\
+We also analyzed the geographical distribution of the incidents over the U.S. territory.
+Specifically we focused on the number of killed people in each incidents in order to possibly understand the relation between killed people and geographical location.
+The plots in Figure \ref{map_du} show the individual incidents recorded and the mass shooting events.
+The incidents that resulted in 0 to 5 killed people are the majority, so the first map does not hold much meaning, given that most of the dots are records that report no killed people.
+The second plot instead highlights events that are to be considered mass shootings and it shows some major events like, for example, Orlando (Florida) mass shooting in 2016 (50 killed people) and Southerland Springs (Texas) mass shooting (27 killed people).
+
+\begin{figure}[h]
+	\centering
+	% TODO
+	%\includegraphics[width=0.5\textwidth]{min_age_du}\includegraphics[width=0.5\textwidth]{map_shooting}
+	%\includegraphics[width=0.5\textwidth]{avg_age_du}\includegraphics[width=0.5\textwidth]{map_massshooting}
+	\caption{Map representing each incident (left) and mass-shooting incidents (right) recorded, the color used for the representation varies in relation to the number of people killed in the incident.
+	The FBI has not set a minimum number of casualties to qualify an event as a mass shooting, but U.S. statute (the Investigative Assistance for Violent Crimes Act of 2012) defines a ``mass killing" as ``3 or more killings in a single incident." (\href{https://www.britannica.com/topic/mass-shooting}{source})}
+	\label{map_du}
+\end{figure}
+
+\section{Correlation Analysis}
 
 The correlation matrix is shown in Figure \ref{corr_matrix_du}.
 At first glance, the only noteworthy correlations are those between the \textit{participant\_age1} feature of the randomly taken person and the attributes \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{age\_age\_participants}.
