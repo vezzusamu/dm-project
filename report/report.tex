@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{report}
+\documentclass[10pt,a4paper]{report}
 \usepackage[a4paper,left=20mm,right=20mm,top=25mm,bottom=20mm]{geometry}
 \usepackage{amsfonts}
 \usepackage{xcolor}
@@ -39,6 +39,8 @@ Vezzuto Samuele\\
 \tableofcontents
 
 \chapter{Data Understanding}
+
+\section{Datasets Analysis}
 
 The data understanding phase aims to prepare data for the following data mining tasks and to gain informations on the general properties of our data.
 This phase of data analysis is focused on an identification of missing values, outliers, duplicates and distribution analysis.
@@ -159,7 +161,7 @@ From Figure \ref{incidents_per_nparticipants} we can see that most of the incide
 Specifically, the majority of them only involve between 0 and 3 participants, with incidents having only one person involved being the most common ones.
 
 \begin{figure}[h]
-	\includegraphics[width=0.7\textwidth]{incidents_per_nparticipants}
+	\includegraphics[width=0.6\textwidth]{incidents_per_nparticipants}
 	\centering
 	\caption{Number of incidents per number of people involved.}
 	\label{incidents_per_nparticipants}
@@ -204,12 +206,12 @@ We also observed that the number of males involved has a high correlation (0.83)
 \chapter{Data Preparation}
 
 The data preparation phase uses the information gained in the previous phase to select records, manage outliers and missing values and improve data quality.
-We started by changing the data types of the attributes as shown in Table \ref{table01}.
+Each attribute was casted to the correct data type, in order to be coherent with the semantics of the feature, as shown in Table \ref{table01}.
 
-\begin{table}
+\begin{table}[t]
 	\centering
 	\begin{small}
-	\begin{tabular}{|l|l|l|p{7cm}|}
+	\begin{tabular}{|l|l|l|p{7.7cm}|}
 		\hline
 		\textbf{Feature Name} & \textbf{Initial Type} & \textbf{Cast Type} & \textbf{Description}\\
 		\hline
@@ -269,7 +271,7 @@ We started by changing the data types of the attributes as shown in Table \ref{t
 		\hline
 		incident\_characteristics2 & object & String & incident characteristics\\
 		\hline
-		year & int64 & Int64 & \\
+		year & int64 & Int64 & year of the incident occurrence\\
 		\hline
 		povertyPercentage & float64 & float64 & poverty percentage for the corresponding state and year\\
 		\hline
@@ -287,83 +289,110 @@ We started by changing the data types of the attributes as shown in Table \ref{t
 	\label{table01}
 \end{table}
 
-We then removed negative values by setting them to NaN.
-
-\subsubsection{Age attributes}
-
-For the attributes \textit{participant\_age1}, \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{avg\_age\_participants}, we considered values $\ge 120$ as outliers and we set them to NaN.
-These three attributes seemed to be very correlated, so we consider deleting the columns \textit{min\_age\_participants} and \textit{max\_age\_participants} and only keeping \textit{avg\_age\_participants}.
+Duplicate records and records where all null attributes where deleted.
+For all numerical attributes, negative values were set to NaN.
 
 \subsubsection{Date}
 
-We considered all dates after 2023-10-01 (the date we received the dataset) to be outliers, in particular errors in the data.
-We dropped all records related to year 2013, as the year was under-represented (only 242 records).
+All records relating to events happened after 2023-10-01 (the date we received the dataset) were considered to be outliers, specifically to be errors in the data, and as such they were dropped.
+We also dropped all records related to year 2013, as the year was under-represented.
+
+\subsubsection{Age attributes}
+
+For the attributes \textit{participant\_age1}, \textit{min\_age\_participants}, \textit{max\_age\_participants} and \textit{avg\_age\_participants}, values greater than or equal to 120 were considered to be outliers and set to NaN.
+These three attributes seem to be very correlated, so we consider deleting the columns \textit{min\_age\_participants} and \textit{max\_age\_participants} and only keeping \textit{avg\_age\_participants}.
+A further motivation for deleting these columns is that \textit{avg\_age\_participants} can not be inferred by computing the mean of min and max age attributes: when the average age is 0 or null, min and max age are also 0 or null.
 
 \subsubsection{Geographical attributes}
 
 The records with coordinates outside U.S. (other that null values) were automatically deleted after the data integration.
-We consider the triple \textit{$<$date,latitude,longitude$>$} to be a key identifying an incident: we assume that there are no incidents happening on the same day in the exact same geographic coordinates.
-Hence, we decided to eliminate the records in which these 3 values are duplicate.
+We consider the triple \textit{$<$date,latitude,longitude$>$} to be a key identifying an incident in a unique way: we assume that there are no incidents happening on the same day in the exact same geographic coordinates.
+Hence, we decided to eliminate the records in which these 3 values are duplicates.
+For the rows in which \textit{latitude} and \textit{longitude} are NaN, the missing values were filled using the mean computed for the corresponding \textit{state} and \textit{city\_or\_county}.
+This allowed us to replace all missing values for \textit{latitude} and \textit{longitude}.
 
-For the rows in which \textit{latitude} and \textit{longitude} are NaN, we filled the missing values using the mean computed for the respective \textit{state} and \textit{city\_or\_county}.
+The columns \textit{state\_house\_district} and \textit{state\_senate\_district} were dropped from the dataset, given that they represent further subdivisions of the US territory that are not pertinent to our analysis.
+In fact, we are only interested in the \textit{congressional\_district} data, because the electoral information provided has the same granularity.
 
-We decided to drop the columns \textit{state\_house\_district} and \textit{state\_senate\_district}, given that they represent further subdivisions of the US territory that are not pertinent to our analysis.
-In fact, we are only interested in the \textit{congressional\_district}, because the electoral information has the same granularity.
+\subsubsection{Number of participants attributes}
 
-\subsubsection{Number of participants' attributes}
+Outliers values found in \textit{n\_participants\_adult}, \textit{n\_participants\_teen} and \textit{n\_participants\_child} features, namely those due to enormous values, were set to NaN.
+In particular, they were set to NaN when their value exceeded the maximum value found in column \textit{n\_participants} (which has no significant large values).
+Furthermore, in records that had \textit{n\_participants} equal to 0, the attributes relating to the number of participants were also set to 0.
 
-We checked whether the number of killed, injured, arrested and unharmed people exceeded the total number of participants in that incident.
-Since, \textit{n\_arrested} and \textit{n\_killed} were the only two attributes with null values, we set them to 0 in case \textit{n\_participants} was 0; we filled the remaining null values using the mean.
+In order to keep the dataset coherent, the value in \textit{n\_participants} was replaced with the sum \textit{n\_males} + \textit{n\_females}, if this sum is equal to (\textit{n\_participants\_adult} + \textit{n\_participants\_teen} + \textit{n\_participants\_child}) and different from \textit{n\_participants}.
+Viceversa, we set to NaN these attributes in the rows where these sums and/or \textit{n\_participants} are not equal.
+The NaN values were then substituted using the mean of each attribute, grouped by \textit{n\_participants}; the few (8) rows for which this replacement was not possible (we were not able to reconstruct the mean) were dropped from the dataset.
+There were no relevant changes in the distribution of these attributes after the cleaning.
 
-We set to NaN the outliers found in \textit{n\_participants\_adult}, \textit{n\_participants\_teen} and \textit{n\_participants\_child} found during data understanding.
-The outliers considered in this step were the values larger than the maximum values of \textit{n\_participants}.
-We also set to zero the attributes \textit{n\_participants\_adult}, \textit{n\_participants\_teen}, \textit{n\_participants\_child}, \textit{n\_males} and \textit{n\_females} when \textit{n\_participants} is 0.
-We replace the value in \textit{n\_participants} with the sum \textit{n\_males} + \textit{n\_females}, if this sum is equal to (\textit{n\_participants\_adult} + \textit{n\_participants\_teen} + \textit{n\_participants\_child}) and different from \textit{n\_participants}.
-Viceversa, we set to NaN these attributes in the rows where the sums and/or \textit{n\_participants} are not equal.
-We then substituted NaN values using the mean of each attribute and dropped the few rows for which we were not able to reconstruct the mean.
+We checked whether the number of killed, injured, arrested and unharmed people exceeds the total number of participants in that incident.
+In case they do, we set them to NaN and then proceeded to fill null values using the mean.
+There was no major change in the distribution of these feature after this operation.
 
 \subsubsection{Incident characteristics}
 
+In order to fill the missing values for feature \textit{incident\_characteristics1}, records were analyzed by looking at data from \textit{n\_killed}, \textit{n\_injured} and \textit{notes} attributes.
+This was done to create subgroups of records, so that incidents characteristics could be reconstructed if missing.
+For records that did not fit in any of these subgroups, \textit{incident\_characteristics1} was filled using the string ``Shots Fired - No Injuries", as they reported no injured or killed people.
 We dropped the column \textit{incident\_characteristics2} given that it has 40\% of null values and does not add meaningful details for our analysis.
 
 \section{Correlation analysis}
 
-We plotted the correlation matrix (Figure \ref{corr_matrix}) only for the numerical attributes.
-We noticed that age attributes are highly correlated: we decided to drop all of them\footnote{We dropped \textit{participant\_age1}, \textit{min\_age\_participants} and \textit{max\_age\_participants}.} except for \textit{avg\_age\_participants}, which is the most correlated to the other attributes and gives us more general informations about all the participants.
-Given the fact that we dropped \textit{participant\_age1}, then the attributes \textit{participant\_gender1} and \textit{participant\_age\_group1} become useless, so we dropped them.
-To fill NaN values in \textit{avg\_age\_participants} we used the mean of each grouping on \textit{n\_participants}.
+The correlation matrix, shown in Figure \ref{corr_matrix_dp}, has been computed only for numerical attributes.
+It can be seen that age attributes are highly correlated.
+Because of this, we decided to drop all of them\footnote{We dropped \textit{participant\_age1}, \textit{min\_age\_participants} and \textit{max\_age\_participants}.} except for \textit{avg\_age\_participants}, which is the most correlated ($>90\%$) to the other attributes and gives us more general informations about all the participants.
+Given the fact that \textit{participant\_age1} was dropped, the attributes \textit{participant\_gender1} and \textit{participant\_age\_group1} become useless because there no longer is any information about the randomly selected person: they were also dropped.
+The only remaining feature related to the participants age is \textit{avg\_age\_participants}, which contains some null values.
+The missing values filled by the mean, by considering the number of adults, teens and children involved in the incident.
+
+It can also be noticed that \textit{n\_participants\_adult} and \textit{n\_males} are highly correlated.
+Furthermore, they can both be obtained by mean of sums of other attributes\footnote{In particular,
+$n\_participants = n\_participants\_adult + n\_participants\_teen + n\_participants\_child$, but also $n\_participants = n\_males + n\_females$.
+All attributes relating to the number of participants were dropped, with the excepytion of \textit{n\_participants}, which conveys the most general information.}, so they were dropped.
+
+We also decided to drop the columns \textit{year} (just a result of data integration), \textit{address} and \textit{notes}.
 
 \begin{figure}[h]
-	\includegraphics[width=0.8\textwidth]{corr_matrix}
+	\includegraphics[width=0.8\textwidth]{corr_matrix_dp}
 	\centering
-	\caption{Correlation matrix plotted of the numerical attributes}
-	\label{corr_matrix}
+	\caption{Correlation matrix of numerical attributes.}
+	\label{corr_matrix_dp}
 \end{figure}
 
 \section{Definition of indicators}
 
-We computed the following indicators:
+After analyzing the data, we considered the following indicators as being representative of an incident severity:
 \begin{itemize}
-	\item \textit{males\_percentage\_per\_city} (\textit{females\_percentage\_per\_city}), the number of males (females) involved in an incident over the total number of males (females) involved in incidents in the same city over the same time period;
-	\item \textit{killed\_percentage\_per\_district} (\textit{injured\_percentage\_per\_district}, \textit{arrested\_percentage\_per\_district}, \textit{unhar\-med\_percentage\_per\_district}), the number of killed (injured, arrested, unharmed) people in an incident over the total number of people killed (injured, arrested, unharmed) in incidents in that same congressional district over the same time period;
-	\item \textit{killed\_percentage\_per\_incident}, the number of killed people in each incident over the total number of participants in that same incident;
-	\item \textit{unharmed\_percentage}, the number of unharmed people in the incident over the average of unharmed people in all the incidents in the same time period;
-	\item \textit{arrest\_percentage}, the number of arrested people over the total number of participants in each incident;
-	\item \textit{killed\_rate\_per\_state} (\textit{injured\_rate\_per\_state}, \textit{arrested\_rate\_per\_state}, \textit{unharmed\_rate\_per\_state}), the total number of people killed (injured, arrested, unharmed) per date and state over the total number of people killed (injured, arrested, unharmed) in that same date;
-	\item \textit{age\_entropy\_per\_state}, the entropy of the \textit{avg\_age\_participants} grouped for date and state;
-	\item \textit{winning\_party\_percentage}, the number of votes of the winning candidate over the total number of votes for that election.
+	\item \textit{incident\_gravity}, number of killed and injured people in an incident,
+	\item \textit{females\_rate}, number female people involved in the incident over the total number of participants in that incident,
+	\item \textit{minor\_rate}, number minors (younger than 17 years old) involved in the incident over the total number of participants,
+	\item \textit{arrested\_rate}, number arrested people in the incident over the total number of participants,
+	\item \textit{survival\_rate}, number unharmed people in the incident over the total number of participants,
+	\item \textit{injured\_rate}, number injured people in the incident over the total number of participants,
+	\item \textit{killed\_rate}, number killed people in the incident over the total number of participants,
+	\item \textit{winning\_party\_percentage}, the number of votes for the winning candidate over the total number of votes in that election.
+	\item \textit{killed\_disp\_per\_district}, number of killed people in the incident over the number of killed people in that same congressional district in the same year,
+	\item \textit{injured\_disp\_per\_district}, number of injured people in the incident over the number of injured people in that same congressional district in the same year,
+	\item \textit{part\_disp\_per\_district}, number of participants in the incident over the number of participants in incidents in that same congressional district in the same year.
 \end{itemize}
 
-We then plotted the correlation matrix (Figure \ref{corr_matrix_indicators}) for the indicators defined above.
-
+The correlation matrix of the chosen indicators is the one in Figure \ref{corr_matrix_indicators}.
+Indicators \textit{female\_ratio} and \textit{minor\_ratio} both have similar behaviors and distributions.
+For most of the incidents, the rates of survival, arrested, injured and killed people are equal to 0.
+A lot of incidents involving injuries, arrests or survivors do not involve deaths.
+Similarly, incidents involving injuries, arrests or deaths do not involve any survivors.
+Indicators \textit{arrested\_rate} and \textit{injured\_rate} have a similar behavior.
+This confirms that these indicators are uncorrelated. 
 \begin{figure}[h]
-	\includegraphics[width=0.8\textwidth]{corr_matrix_indicators}
+	\includegraphics[width=1\textwidth]{corr_matrix_indicators}
 	\centering
 	\caption{Correlation matrix plotted of the newly created indicators}
 	\label{corr_matrix_indicators}
 \end{figure}
 
-We also decided to drop the columns \textit{year} (just a result of data integration), \textit{address} and \textit{notes}.
+The last three indicators often have value 0, which is also the value of the mean.
+Over all, the indicators we identified have no missing values; they have some outliers that are coherent with the one in the numerical attributes, so we decided not to clean them.
+All these indicators provide a good characterization of the incidents and are at most moderately correlated.
 
 \chapter{Clustering}
 
@@ -387,5 +416,9 @@ The we computed the PCA with 2 components and got the visualization showed in Fi
 \section{Hierarchical clustering}
 
 \section{Dbscan clustering}
+
+\chapter{Classification}
+
+\chapter{Time Series Analysis}
 
 \end{document}
