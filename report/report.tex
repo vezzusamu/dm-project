@@ -47,7 +47,7 @@ This phase of data analysis is focused on an identification of missing values, o
 The three csv files, \texttt{incidents.csv}, \texttt{povertyByStateYear.csv} and \texttt{year\_state\_district\_house.csv} were imported and analyzed separately.
 The first preliminary checks comprised looking for null values and checking the data types of the attributes, before a more in depth analysis of each column of each dataset.
 By computing the statistics of the numerical values of each dataset, we noticed a wrong value in attribute \textit{participant\_age\_1} (values of 311).
-We also found out that some of the columns considered contained non-numerical values, as they were not displayed.
+We also found out that some of the columns considered contained non-numerical values, as they were not displayed when the pandas \texttt{describe()} method was used.
 The value of 0 for attribute \textit{participant\_age\_1} occurs when there are infants involved and therefore it is not to be considered a wrong value.
 In a similar way, \textit{n\_participants} has value 0 if the incident had no victims or no shots where fired, but also in records with most of the attributes set to null.
 
@@ -80,8 +80,8 @@ Figure \ref{incidents_per_state} shows the number of incidents recorded in each 
 \end{figure}
 
 The \textit{city\_or\_county} attribute has no null values, but it often contains additional informations about the suburb or the neighborhood in brackets, that provide a more precise location for the incident, e.g. ``Minneapolis (Brooklyn Center)".
-We consider removing this kind of information in the next phase.
-There are also instances containing the substring ``(county)" at the end, e.g. ``Orange (county)", that also appears as ``Orange": these instances will be substituted using just the name of the city/county.
+%We consider removing this kind of information in the next phase.
+%There are also instances containing the substring ``(county)" at the end, e.g. ``Orange (county)", that also appears as ``Orange": these instances will be substituted using just the name of the city/county.
 Figure \ref{incidents_per_citycounty} shows the number of incidents recorded in each city/county in decreasing order.
 \begin{figure}[H]
 	\includegraphics[width=0.8\textwidth]{incidents_per_citycounty}
@@ -396,16 +396,29 @@ All these indicators provide a good characterization of the incidents and are at
 
 \chapter{Clustering}
 
-In order to prepare data for applying the clustering algorithms, we did some steps of preprocessing.
-First of all we added a binary column \textit{involve\_killing} that has value 0 nobody was killed in the incident, and it has value 1 if there was at least a person killed in the incident.
+\section{Preprocessing}
+
+In order to apply clustering methods, data need to be prepared through some steps of preprocessing.
+First of all some new binary columns were added and used to label the PCA results:
+\begin{itemize}
+	\item \textit{involve\_killing}, its value is 0 if nobody was killed in the incident, it is 1 if at least a person was killed;
+	\item \textit{involve\_injury}, its value is 0 if nobody was injured in the incident, it is 1 if at least a person was injured;
+	\item \textit{involve\_arrest}, its value is 0 if nobody was arrested in the incident, it is 1 if at least a person was arrested;
+	\item \textit{is\_survived}, its value is 0 if nobody survived in the incident, it is 1 if at least a person survived.
+\end{itemize}
+The new feature \textit{involve\_killing} will also be used in the following classification task.
+Given that for clustering we will use a distance metric, that only works on numerical attributes, we remove categorical attributes for this task and only used the indicators listed in the previous section.
+This features are also normalized: scaling data is useful to avoid some values being too large and prevailing on the others when a clustering algorithm is applied.
 We applied a normalization to numerical values.
-The we computed the PCA with 2 components and got the visualization showed in Figure \ref{pca}.
+
+The Principal Component Analysis is computed using two components.
+It yields a 2-dimensional visualization of the multidimensional data considered, shown in Figure \ref{pca}.
 
 \begin{figure}[h]
-	\includegraphics[width=0.8\textwidth]{pca}
 	\centering
-	\caption{Principal component analysis, computed on 2 components.
-	The color of the points corresponds to the value of \textit{involve\_killed}.}
+	\includegraphics[width=0.5\textwidth]{pca_killing}\includegraphics[width=0.5\textwidth]{pca_injury}
+	\caption{PCA, with number of components equal to 2.
+	The color of the points corresponds to the value of \textit{involve\_killing} in the left plot and to the value of \textit{involve\_injury} in the right plot.}
 	\label{pca}
 \end{figure}
 
