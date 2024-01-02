@@ -398,7 +398,7 @@ All these indicators provide a good characterization of the incidents and are at
 
 \section{Preprocessing}
 
-In order to apply clustering methods, data need to be prepared through some steps of preprocessing.
+In order to apply clustering methods, data needs to be prepared through some steps of preprocessing.
 First of all some new binary columns were added and used to label the PCA results:
 \begin{itemize}
 	\item \textit{involve\_killing}, its value is 0 if nobody was killed in the incident, it is 1 if at least a person was killed;
@@ -407,9 +407,8 @@ First of all some new binary columns were added and used to label the PCA result
 	\item \textit{is\_survived}, its value is 0 if nobody survived in the incident, it is 1 if at least a person survived.
 \end{itemize}
 The new feature \textit{involve\_killing} will also be used in the following classification task.
-Given that for clustering we will use a distance metric, that only works on numerical attributes, we remove categorical attributes for this task and only used the indicators listed in the previous section.
-This features are also normalized: scaling data is useful to avoid some values being too large and prevailing on the others when a clustering algorithm is applied.
-We applied a normalization to numerical values.
+Given that for clustering we will use a distance metric, that only works on numerical attributes, we remove categorical attributes for this task and we only use the indicators listed in the previous section.
+The features are also normalized: scaling data is useful to avoid some values being too large and prevailing on the others when a clustering algorithm is applied, so we computed a normalization of the numerical values.
 
 The Principal Component Analysis is computed using two components.
 It yields a 2-dimensional visualization of the multidimensional data considered, shown in Figure \ref{pca}.
@@ -424,14 +423,150 @@ It yields a 2-dimensional visualization of the multidimensional data considered,
 
 \section{K-Means}
 
+In order to estimate the best value of $k$ to then apply the K-means clustering algorithm, the elbow method was used.
+The grid search on values of $k \in \{2, 3, 4, 10, 100, 100\}$ yielded the following results, evaluated in terms of the metrics SSE, separation and silhouette.
+A plot of the SSE and silhouette scores is shown in Figure \ref{kmeans_k}:
+\begin{table}[h]
+	\centering
+	\begin{small}
+		\begin{tabular}{l|p{4cm}|p{4cm}|p{4cm}}
+		\textbf{K} & \textbf{SSE} & \textbf{separation} & \textbf{silhouette}\\
+		\hline
+		2 & 1868436.1752223005 & 1.9881698493281088 & 0.1938016918423718\\
+		3 & 1562300.2158580532 & 1.6287560855244605 & 0.24111879379810464\\
+		4 & 1401333.0002367594 & 1.435772151754466 & 0.24457341442342728\\
+		10 & 935031.5401451141 & 1.4857417427196573 & 0.27681666821740364\\
+		100 & 315602.0491054469 & 1.3057093979420389 & 0.26549526914793403\\
+		1000 & 96365.98745985169 & 1.2338707526266535 & 0.2938211523306092\\
+	\end{tabular}
+	\end{small}
+\end{table}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.35\textwidth]{kmeans_sse}\includegraphics[width=0.35\textwidth]{kmeans_silhouette}
+	\caption{Plots of SSE (left) and the silhouette (right) scores.}
+	\label{kmeans_k}
+\end{figure}
+
+Both the elbow method and the silhouette score point out that the best value for $k$ is around 3.
+After fitting the method to our data, the clustering results were plotted on the 2 PCA dimensions, label the points according to the belonging cluster.
+The plot is shown in Figure \ref{kmeans_pca}, along with the cluster label distribution.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.45\textwidth]{kmeans_pca}\includegraphics[width=0.4\textwidth]{kmeans_pie}
+	\caption{Plots of the PCA components after the clustering labeling (left) and the distribution of the cluster labels (right).}
+	\label{kmeans_pca}
+\end{figure}
+
+Figure \ref{kmeans_killing} shows the distribution of values of feature \textit{involve\_killing} in the three clusters found.
+The first two clusters contain a majority of non fatal incidents, while the third cluster only contains incidents involving at least a person killed.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.2\textwidth]{kmeans_0}\includegraphics[width=0.2\textwidth]{kmeans_1}\includegraphics[width=0.2\textwidth]{kmeans_2}
+	\caption{Plots of the three clusters found by applying K-means, labeled according to the value of \textit{involve\_killing}.
+	Cluster 0 has 68459 incidents for which \textit{involve\_killing} is 0, 2714 incidents for which it is 1;
+	Cluster 1 has 75225 incidents for which \textit{involve\_killing} is 0, 155 incidents for which it is 1;
+	Cluster 2 contains 40981 incidents for which \textit{involve\_killing} is 1.}
+	\label{kmeans_killing}
+\end{figure}
+
 \subsection{X-Means}
 
-\section{Hierarchical clustering}
+The X-means implementation used is \textit{pyclustering}\footnote{Pyclustering: \url{https://github.com/annoviko/pyclustering/}}.
+The starting parameter for X-means was a maximum number of clusters of 10, repeating 10 times the execution of K-means.
+Computing the clusters using the X-mean algorithm, the result was composed of 10 clusters.
+The metrics of silhouette and separation obtained from these clusters were 1.4333188536330668 and 0.2239619283502909 respectively.
+The distribution of values of feature \textit{involve\_killing} per cluster and the distribution of the cluster labels is shown in Figure \ref{xmeans_killing}.
+Specifically, the distribution of the cluster labels is uneven.
+
+\textbf{TODO:} \textit{inserire SSE!!}
+\begin{figure}[h]
+	\centering
+	\begin{minipage}{0.75\textwidth}
+		\includegraphics[width=0.2\textwidth]{xmeans_0}\includegraphics[width=0.2\textwidth]{xmeans_1}\includegraphics[width=0.2\textwidth]{xmeans_2}\includegraphics[width=0.2\textwidth]{xmeans_3}\includegraphics[width=0.2\textwidth]{xmeans_4}
+		\includegraphics[width=0.2\textwidth]{xmeans_5}\includegraphics[width=0.2\textwidth]{xmeans_6}\includegraphics[width=0.2\textwidth]{xmeans_7}\includegraphics[width=0.2\textwidth]{xmeans_8}\includegraphics[width=0.2\textwidth]{xmeans_9}
+	\end{minipage}%
+	\begin{minipage}{0.25\textwidth}
+		\centering
+		\vspace{1cm}
+		\includegraphics[width=1\textwidth]{xmeans_distribution}
+		\vspace{0.8cm}
+	\end{minipage}
+		\caption{Plots of the ten clusters found applying X-means (left), labeled according to the value of \textit{involve\_killing}, and the plot of the distribution of the cluster labels (right).}
+		\label{xmeans_killing}
+\end{figure}
 
 \section{Dbscan clustering}
 
+As per the classification subtask in the project description, only one state was chosen for this clustering task: the state of Illinois, that is the first state per number of gun incidents (15319).
+Density-based clustering algorithms are used to identify irregularly shaped clusters.
+In order to estimate the best value for the epsilon ($\varepsilon$) parameter, the elbow method was used: computing the distance to the $k$ nearest neighbors and sorting them in decreasing order resulted in the plot shown in Figure \ref{dbscan_elbow}.
+The best estimation found for the value of $\varepsilon$ is around 1.5.
+Different values of $\varepsilon$ were then explored along with varying values of \textit{min\_samples}, resulting in Table \ref{table02}, shown in decreasing order of silhouette score.
+Therefore, the best values of $\varepsilon$ and \textit{min\_samples} are 1.6 and 160 respectively.
+
+Applying Dbscan to the dataset using the parameters shown above lead to  find 4 clusters.
+Figure \ref{dbscan_elbow} also shows the scatter plot of these results on the 2 PCA components defined before, along with the distribution of the cluster labels.
+The plots show that all incidents in which there was at least a person killed belong to Cluster 2, while Clusters 0, 1 and 3 only feature non-deadly incidents.
+\begin{table}[h]
+	\centering
+	\begin{small}
+		\begin{tabular}{c|c|c|c|c}
+			\textbf{$\varepsilon$} & \textbf{silhouette} & \textbf{DBscore} & \textbf{n\_clusters} & \textbf{min\_samples}\\
+			\hline
+			1.6 & 0.202494 & 001814 & 5 & 160\\
+			1.6 & 0.199733 & 004573 & 5 & 170\\
+			1.6 & 0.197965 & 998093 & 5 & 180\\
+			1.7 & 0.180224 & 643053 & 3 & 180\\
+			1.7 & 0.086065 & 570127 & 4 & 160\\
+			1.7 & 0.073308 & 567566 & 4 & 170\\
+	\end{tabular}
+	\end{small}
+	\caption{Table showing the search for the best values of $\varepsilon$ and \textit{min\_samples} parameters.}
+	\label{table02}
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\textwidth]{dbscan_elbow}\includegraphics[width=0.31\textwidth]{dbscan_pca}\includegraphics[width=0.3\textwidth]{dbscan_distribution}
+	\caption{Plots of the elbow method result (left), the PCA components after the clutering labeling (middle) and the distribution of the cluster labels (right).}
+	\label{dbscan_elbow}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.2\textwidth]{dbscan_0}\includegraphics[width=0.2\textwidth]{dbscan_1}\includegraphics[width=0.2\textwidth]{dbscan_2}\includegraphics[width=0.2\textwidth]{dbscan_3}
+	\caption{Plots of the four clusters found applying Dbscan, labeled according to the value of \textit{involve\_killing}.}
+	\label{xmeans_killing}
+\end{figure}
+
+\section{Hierarchical clustering}
+
+As per the classification subtask in the project description, only one state was chosen for this clustering task: the state of California, that is the second state per number of gun incidents (12980).
+In order to identify the best metric for distance and the best method, we evaluated different trials.
+The best results were obtained by using the correlation distance metric\footnote{Correlation distance between vectors $u$ and $v$: $1 - \frac{(u-\bar{u})\cdot(v-\bar{v})}{\left \Vert (u-\bar{u}) \right \|_2 \left \Vert (v-\bar{v}) \right \|_2}$, where $\bar{v}$ is the mean of the elements of vector $v$.}, the weighted linkage method\footnote{The weighted method assigns $d(u,v) = \frac{dist(s,v)+dist(t,v)}{2}$, where cluster $u$ was formed with cluster $s$ and $t$ and $v$ is a remaining cluster in the forest.}.
+By using this final model, the silhouette score is 0.2589355057625014 and the DBscore 1.4509696821004128.
+The dendrogram displayed in Figure \ref{hiera} was truncated at level 5, so that it can be better observed.
+The cluster label distribution is not even: the cluster sizes are, in order, 772, 5018, 2697, 513, 3980.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{hiera_dendro}\includegraphics[width=0.4\textwidth]{hiera_distribution}
+	\caption{Plots of the dendrogram obtained by applying Dbscan (left) and the distribution of the cluster labels (right).}
+	\label{hiera}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.2\textwidth]{hiera_1}\includegraphics[width=0.2\textwidth]{hiera_2}\includegraphics[width=0.2\textwidth]{hiera_3}\includegraphics[width=0.2\textwidth]{hiera_4}\includegraphics[width=0.2\textwidth]{hiera_5}
+	\caption{Plots of the five clusters found applying agglomerative hierarchical clustering, labeled according to the value of \textit{involve\_killing}.}
+	\label{hiera_killing}
+\end{figure}
+
+After applying all the methods shown before and analyzing the results obtained, we chose Dbscan as the best performing clustering algorithm, both because of the cluster distribution and the  distribution of records reporting at least one dead person in the incident.
+
 \chapter{Classification}
 
-\chapter{Time Series Analysis}
+\chapter{Explanation Analysis}
 
 \end{document}
