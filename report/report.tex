@@ -204,7 +204,6 @@ We also observed that the number of males involved has a high correlation (0.83)
 	\label{corr_matrix_du}
 \end{figure}
 
-
 \chapter{Data Preparation}
 
 The data preparation phase uses the information gained in the previous phase to select records, manage outliers and missing values and improve data quality.
@@ -576,6 +575,43 @@ The cluster label distribution is not even: the cluster sizes are, in order, 772
 After applying all the methods shown before and analyzing the results obtained, we chose Dbscan as the best performing clustering algorithm, both because of the cluster distribution and the  distribution of records reporting at least one dead person in the incident.
 
 \chapter{Classification}
+
+\section{Preprocessing}
+
+The aim of the classification task is to predict if an incident resulted in one or more dead people.
+For this purpose the binary attribute \textit{involve\_killing} (\textit{isKilled}) is used as the class to be predicted.
+The categorical attributes of the dataset, \textit{date}, \textit{state}, \textit{city\_or\_county} and \textit{party}, were discretized so that the could be fed into the classification models.
+After plotting the correlation matrix, shown in Figure \ref{corr_matrix_class}, of the features to consider for the classification task, it could be noticed that some of the features were highly correlated.
+
+\begin{figure}[b!]
+	\includegraphics[width=0.9\textwidth]{corr_matrix_class}
+	\centering
+	\caption{Correlation matrix of numerical attributes.}
+	\label{corr_matrix_class}
+\end{figure}
+
+Therefore, the highly correlated features were dropped.
+Specifically all the indicators used for clustering, along with \textit{latitude} and \textit{longitude}, as they represent a sort of incident unique identifier.
+Additionally, attribute \textit{n\_killed} was dropped because it has a high correlation with \textit{involve\_killing}; \textit{candidatevotes} and \textit{totalvotes} were also dropped given that they are irrelevant for this task and only add further details to the majority winning party already represented by the attribute \textit{party}.
+Feature \textit{incident\_characteristics1} was eliminated because providing a label to each incident is liable to simplify too much the classification task.
+Moreover, almost all (178172 rows out of 187534) the incidents present in the dataset fit the linear relation
+$$ n\_killed == n\_participants - (n\_injured + n\_unharmed + n\_arrested) $$
+and simple baseline methods, like logistic regression and k-nn, with this setting of features reach almost above 95\% of accuracy and 90\% of precision, recall, f1.
+For this reason features \textit{n\_injured} and \textit{n\_unharmed} were also dropped from the dataset, as they are possibly less accurate values: it may happen that the number of injured or arrested people grows over time, whereas the number of arrested people does not.
+We assume attribute \textit{n\_participants} to hold the most general information value.
+
+Before applying any classification method, it can be noticed that the dataset is unbalanced toward the negative value of \textit{involve\_killing}, as only 23\% of records concern a dead person.
+As said before, \textit{involve\_killing} will be the label used for classifying the records.
+The dataset has been partitioned into training, validation and test sets suing a 30 by 70 split.
+
+\section{Logistic Regression}
+\section{KNN}
+\section{Naive Bayes}
+\section{Decision Tree}
+\section{SVM}
+\section{Rule-based Classification}
+\section{Neural Network}
+\section{Ensemble Methods}
 
 \chapter{Explanation Analysis}
 
