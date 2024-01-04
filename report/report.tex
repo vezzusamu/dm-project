@@ -433,12 +433,12 @@ A plot of the SSE and silhouette scores is shown in Figure \ref{kmeans_k}.
 		\begin{tabular}{l|p{4cm}|p{4cm}|p{4cm}}
 		\textbf{K} & \textbf{SSE} & \textbf{separation} & \textbf{silhouette}\\
 		\hline
-		2 & 1868436.1752223005 & 1.9881698493281088 & 0.1938016918423718\\
-		3 & 1562300.2158580532 & 1.6287560855244605 & 0.24111879379810464\\
-		4 & 1401333.0002367594 & 1.435772151754466 & 0.24457341442342728\\
-		10 & 935031.5401451141 & 1.4857417427196573 & 0.27681666821740364\\
-		100 & 315602.0491054469 & 1.3057093979420389 & 0.26549526914793403\\
-		1000 & 96365.98745985169 & 1.2338707526266535 & 0.2938211523306092\\
+		2 & 1646704.8754374427 & 1.9813490226692585 & 0.19903279722963033\\
+		3 & 1366709.6190671802 & 1.5838954094680056 & 0.2543040652371257\\
+		4 & 1208515.0384513792 & 1.373537915972873 & 0.264056508390661\\
+		10 & 832875.8319438391 & 1.492059625402054 & 0.26313048361326374\\
+		100 & 289769.5750204325 & 1.3249339566946525 & 0.24484177046223854\\
+		1000 & 87637.38882029489 & 1.239347513960958 & 0.28485631292038815\\
 	\end{tabular}
 	\end{small}
 	\caption{Values of SSE, separation and silhouette score computed for increasing values of $k$.}
@@ -451,7 +451,7 @@ A plot of the SSE and silhouette scores is shown in Figure \ref{kmeans_k}.
 	\label{kmeans_k}
 \end{figure}
 
-Both the elbow method and the silhouette score point out that the best value for $k$ is around 3.
+Both the elbow method and the silhouette score point out that the best value for $k$ is around 4.
 After fitting the method to our data, the clustering results were plotted on the 2 PCA dimensions, label the points according to the belonging cluster.
 The plot is shown in Figure \ref{kmeans_pca}, along with the cluster label distribution.
 \begin{figure}[h]
@@ -461,6 +461,7 @@ The plot is shown in Figure \ref{kmeans_pca}, along with the cluster label distr
 	\label{kmeans_pca}
 \end{figure}
 
+\textbf{TODO:}\\
 Figure \ref{kmeans_killing} shows the distribution of values of feature \textit{involve\_killing} in the three clusters found.
 The first two clusters contain a majority of non fatal incidents, while the third cluster only contains incidents involving at least one killed person.
 \begin{figure}[h]
@@ -543,6 +544,8 @@ The plots show that all the incidents in which there was at least a person kille
 	\label{xmeans_killing}
 \end{figure}
 
+\textbf{TODO:} grafici nuovi
+
 \section{Hierarchical clustering}
 
 As per the classification subtask in the project description, only one state was chosen for this clustering task: the state of California, that is the second state per number of gun incidents (12980).
@@ -580,7 +583,7 @@ After applying all the methods shown before and analyzing the results obtained, 
 
 The aim of the classification task is to predict if an incident resulted in one or more dead people.
 For this purpose the binary attribute \textit{involve\_killing} (\textit{isKilled}) is used as the class to be predicted.
-The categorical attributes of the dataset, \textit{date}, \textit{state}, \textit{city\_or\_county} and \textit{party}, were discretized so that the could be fed into the classification models.
+The categorical attributes of the dataset, \textit{date}, \textit{state}, \textit{city\_or\_county} and \textit{party}, were discretized so that they could be fed into the classification models.
 After plotting the correlation matrix, shown in Figure \ref{corr_matrix_class}, of the features to consider for the classification task, it could be noticed that some of the features were highly correlated.
 
 \begin{figure}[b!]
@@ -602,7 +605,9 @@ We assume attribute \textit{n\_participants} to hold the most general informatio
 
 Before applying any classification method, it can be noticed that the dataset is unbalanced toward the negative value of \textit{involve\_killing}, as only 23\% of records concern a dead person.
 As said before, \textit{involve\_killing} will be the label used for classifying the records.
-The dataset has been partitioned into training, validation and test sets suing a 30 by 70 split.
+The dataset was then partitioned into training, validation and test sets using a 30 by 70 split.
+In order to get a better performance from the classification methods, data was standardized.
+%By using undersampling and oversampling techniques, it can be noticed that
 
 \section{Logistic Regression}
 \section{KNN}
